@@ -36,7 +36,7 @@ class Ini_params():
         self.show_plots  = False                          #must be False when using mpi
         self.need_files  = False                          #If files needed get them from bnl-cluster
 
-        self.dir_spec    = 'spectra/'
+        self.dir_spec    = 'data/spectra/'
         self.dir_v5_10   = 'v5_10_0/spectra/'
         self.pix_dir     = 'healpix/'
 
@@ -128,7 +128,9 @@ class Qso_catalog(Ini_params):
         for targ, bits in self.targets.items():
             a.append(self.searching_quasars(targ, bits))
         self.df_qsos = self.df_fits[reduce(lambda x, y: x | y, a)].copy()
-
+        
+        self.df_qsos = self.df_qsos[self.df_qsos['Z']> 2]
+	print self.df_qsos.head()
         if self.verbose: self.print_filter_qsos(self.df_qsos, 'Both')
         return 0
 
@@ -435,7 +437,7 @@ class Qso_catalog(Ini_params):
             df_file = read_fits(self.dir_spec , names, self.spec_cols).set_index('loglam')
             df_file['flux'].plot()
             print(name.replace('.fits',''))
-            plt.savefig('File_chisq_%.2f_%s.png'%(chisq, name.replace('.fits','')))
+            plt.savefig('/bad_specs/File_chisq_%.2f_%s.png'%(chisq, name.replace('.fits','')))
             plt.show(block=True)
 
 
@@ -443,4 +445,4 @@ if __name__=='__main__':
     print ("goofing around :P ")
     Qsos    = Qso_catalog(None, verbose = True)
     #Qsos.plot_stats(8)
-    Qsos.plot_bad_spec(12)
+    Qsos.plot_bad_spec(8)
